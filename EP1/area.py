@@ -2,7 +2,7 @@ import random
 import matplotlib.pyplot as plt
 import numpy as np
 
-T = 4096
+T = 32 # Number of experiments
 
 def main():
     '''
@@ -18,7 +18,7 @@ def main():
     print('{0:-^80}'.format(''))
 
     raio = 1
-    for i in range(12):
+    for i in range(20):
         area = Area(n = 2**i, t=T, r=raio)
         print('{0:^5} | {1:^30} | {2:^30} | {3:^10}'.format(f'{area.n}',
                                                             f'{area.mean()}',
@@ -34,7 +34,8 @@ class Area:
         self.n = n
         self.t = t
         self.raio = r
-        self.points = []
+        xPoints = np.random.random(n)
+        yPoints = np.random.random(n)
 
         area_semicirculo = 0
         for i in range(t):
@@ -68,16 +69,15 @@ class Area:
         r = self.raio
         if n == 0: return 0  # there's no experiment to do
 
-        cont = 0
-        for i in range(n):
-            x = random.random()*r
-            y = random.random()*r
-            self.points.append((x,y))
-            if x*x + y*y < r*r: cont += 1
+        self.xPoints = np.random.random(n)  # create randomly points to the x axis
+        self.yPoints = np.random.random(n)  # create randomly points to the y axis
+
+        self.indicadora = self.xPoints**2 + self.yPoints**2 < self.raio**1  # function that will tell us if each point is inside the circle
+        cont = np.sum(self.indicadora) # count the number of points that are inside the circle
 
         return r*r*(cont/n)  # probability that the point is inside the semicircle
     
-    
+
     # ESSA FUNÇÃO FUNCIONA! MAS DEMORA MUITO PARA EXECUTAR
     def geraGrafico(self, points):
         an = np.linspace(0, 0.5 * np.pi, 50)  # with (0.5 * np.pi) we create a semicircle
