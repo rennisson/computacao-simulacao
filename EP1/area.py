@@ -1,29 +1,25 @@
-import random
 import matplotlib.pyplot as plt
 import numpy as np
+import math
+#import plotly.express as px
 
-T = 32 # Number of experiments
+T = 1 # Number of experiments
 
 def main():
     '''
     Testes da classe Area
     '''
-
-    print("---------- EXPERIMENTOS DA CLASSE AREA ----------")
-    print(f"Nº de experimentos utilizados no teste = {T}\n")
-    print('{0:^5} | {1:^30} | {2:^30} | {3:^10}'.format('n',
-                                                        'Area',
-                                                        'Erro estimado',
-                                                        '% do ERRO'))
-    print('{0:-^80}'.format(''))
-
     raio = 1
-    for i in range(20):
-        area = Area(n = 2**i, t=T, r=raio)
-        print('{0:^5} | {1:^30} | {2:^30} | {3:^10}'.format(f'{area.n}',
-                                                            f'{area.mean()}',
+    print("---------- EXPERIMENTOS ----------\n")
+    print('{0:^8} | {1:^10} | {2:^25} | {3:^15}'.format('n', 'Area (pi^)', 'pi^ - pi', 'Precisão (%)'))
+    print('{0:-^70}'.format(''))
+
+    for i in range(0, 20):
+        area = Area(n=4088225, t=T, r=raio)
+        print('{0:^8} | {1:^10} | {2:^25} | {3:^15}'.format(f'{area.n}',
+                                                            f'{area.mean():.6}',
                                                             f'{area.erro_estimado()}',
-                                                            f'{area.erro_relativo()}'))
+                                                            f'{area.erro_relativo():.6}'))
     
     print()
 
@@ -34,22 +30,22 @@ class Area:
         self.n = n
         self.t = t
         self.raio = r
-        xPoints = np.random.random(n)
-        yPoints = np.random.random(n)
 
-        area_semicirculo = 0
-        for i in range(t):
-            area_semicirculo += self.experimento()
+        area_circulo = 0
+        area_circulo += self.experimento()
         
-        #self.geraGrafico(self.points)
-        
-        self.p = 4*area_semicirculo/t
+        self.p = 4*area_circulo/t
+        #self.geraGrafico()
 
     def erro_estimado(self):
-        return f'{np.pi - self.mean()}'
+        return f'{abs(np.pi - self.mean())}'
 
     def erro_relativo(self):
-        return f'{self.mean() / np.pi}'
+        porc = abs((self.mean() / np.pi))*100
+        if porc > 100:
+            return 100 - (porc - 100)
+        return porc
+
     
     def mean(self):
         '''(Area) -> float
@@ -69,34 +65,17 @@ class Area:
         r = self.raio
         if n == 0: return 0  # there's no experiment to do
 
-        self.xPoints = np.random.random(n)  # create randomly points to the x axis
-        self.yPoints = np.random.random(n)  # create randomly points to the y axis
+        np.random.seed(13687175)
+        xPoints = np.random.random(n) * 2 - 1  # create randomly points to the x axis
+        yPoints = np.random.random(n) * 2 - 1 # create randomly points to the y axis
 
-        self.indicadora = self.xPoints**2 + self.yPoints**2 < self.raio**1  # function that will tell us if each point is inside the circle
-        cont = np.sum(self.indicadora) # count the number of points that are inside the circle
+        # function that will tell us if each point is inside the circle
+        indicadora = xPoints**2 + yPoints**2 < self.raio**2
+        cont = np.sum(indicadora) # count the number of points that are inside the
+        
+        #self.geraGrafico()
 
         return r*r*(cont/n)  # probability that the point is inside the semicircle
-    
-
-    # ESSA FUNÇÃO FUNCIONA! MAS DEMORA MUITO PARA EXECUTAR
-    def geraGrafico(self, points):
-        an = np.linspace(0, 0.5 * np.pi, 50)  # with (0.5 * np.pi) we create a semicircle
-        fig, axs = plt.subplots()
-        
-        axs.plot(np.cos(an), np.sin(an))
-        axs.axis('equal')
-        axs.set_title(f'Semicircle area (n = {self.n})', fontsize=10)
-
-        for coordinate in points:
-            x,y = coordinate
-            if x*x + y*y < self.raio * self.raio:
-                axs.scatter(x, y, color="black")
-            else: axs.scatter(x, y, color="red")
-
-        fig.tight_layout()
-
-        plt.show()
-    
 
 if __name__ == '__main__':
     main()
