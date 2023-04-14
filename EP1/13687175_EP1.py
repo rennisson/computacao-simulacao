@@ -1,7 +1,4 @@
-import matplotlib.pyplot as plt
 import numpy as np
-import math
-#import plotly.express as px
 
 T = 1 # Number of experiments
 
@@ -15,7 +12,8 @@ def main():
     print('{0:-^70}'.format(''))
 
     for i in range(0, 20):
-        area = Area(n=4088225, t=T, r=raio)
+        np.random.seed(13687175 + i)
+        area = Area(n=15000000, t=T, r=raio)
         print('{0:^8} | {1:^10} | {2:^25} | {3:^15}'.format(f'{area.n}',
                                                             f'{area.mean():.6}',
                                                             f'{area.erro_estimado()}',
@@ -35,7 +33,6 @@ class Area:
         area_circulo += self.experimento()
         
         self.p = 4*area_circulo/t
-        #self.geraGrafico()
 
     def erro_estimado(self):
         return f'{abs(np.pi - self.mean())}'
@@ -65,15 +62,12 @@ class Area:
         r = self.raio
         if n == 0: return 0  # there's no experiment to do
 
-        np.random.seed(13687175)
         xPoints = np.random.random(n) * 2 - 1  # create randomly points to the x axis
         yPoints = np.random.random(n) * 2 - 1 # create randomly points to the y axis
 
         # function that will tell us if each point is inside the circle
         indicadora = xPoints**2 + yPoints**2 < self.raio**2
         cont = np.sum(indicadora) # count the number of points that are inside the
-        
-        #self.geraGrafico()
 
         return r*r*(cont/n)  # probability that the point is inside the semicircle
 
