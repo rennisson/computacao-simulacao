@@ -3,51 +3,60 @@ import numpy as np
 from scipy.stats import beta
 import matplotlib.pyplot as plt
 
+SEED = 13687175
 N = 1000 # Sample size
 A = 0.386617636
 B = 0.47950399848
 
 def main():
-    np.random.seed(13687175)
+    np.random.seed(SEED)
 
+    print('CRUDE')
     print('{0:^10} | {1:^25}'.format('Sample',
                                      f'Estimativa'))
     print('-'*35)
-    for i in range(1, 20):
-        crude = Crude(1000*i)
-        print('{0:^10} | {1:^25}'.format(f'{crude.n}',
-                                        f'{crude.estimativa()}'))
+    # for i in range(1, 3):
+    #     crude = Crude(13465688)
+    #     print('{0:^10} | {1:^25}'.format(f'{crude.n}',
+    #                                     f'{crude.estimativa()}'))
 
     print('\n \n')
-
+    print('Hit or Miss')
     print('{0:^10} | {1:^25}'.format('Sample',
                                      f'Estimativa'))
     print('-' * 35)
-    for i in range(1, 20):
-        hom = HitOrMiss(1000 * i)
+    for i in range(1, 10):
+        hom = HitOrMiss(10128002)
         print('{0:^10} | {1:^25}'.format(f'{hom.n}',
                                          f'{hom.estimativa()}'))
 
     print('\n \n')
-
+    print('IMPORTANCE SAMPLING')
     print('{0:^10} | {1:^25}'.format('Sample',
                                      f'Estimativa'))
     print('-' * 35)
-    for i in range(1, 20):
+    for i in range(1, 3):
         imp_sample = ImportanceSampling(1000 * i)
         print('{0:^10} | {1:^25}'.format(f'{imp_sample.n}',
                                          f'{imp_sample.estimativa()}'))
+
+    print('\n \n')
+    print('CONTROL VARIATE')
+    print('{0:^10} | {1:^25}'.format('Sample',
+                                     f'Estimativa'))
+    print('-' * 35)
+    for i in range(1, 3):
+        control = ControlVariate(3059462)
+        print('{0:^10} | {1:^25}'.format(f'{control.n}',
+                                         f'{control.estimativa()}'))
 
 
 class Crude:
     def __init__(self, n):
         self.n = n
-        points = self.uniform(n)
+        # Choose randomly points in [0,1) using Uniform distribution
+        points = np.random.uniform(0, 1, n)
         self.soma = self.experimento(points)
-
-    # Choose randomly points in [0,1) using Uniform distribution
-    def uniform(self, n):
-        return np.random.uniform(0, 1, n)
 
     def experimento(self, points):
         n = len(points)
@@ -67,22 +76,18 @@ class HitOrMiss:
         self.n = n
         self.xPoints = np.random.uniform(0, 1, n)
         self.yPoints = np.random.uniform(0, 1, n)
-
         self.soma = self.experimento()
 
-    def indicadora(self, x, y):
-        fComparison = []
-        for i in range(len(self.xPoints)):
-            fComparison = math.exp(-A*self.xPoints[i]) * math.cos(B*self.xPoints[i])
-
-        function = self.yPoints <= fComparison
-        return function
-
     def experimento(self):
-        function = self.indicadora(self.xPoints, self.yPoints)
-        soma = 0
-        for i in range(len(function)):
-            soma += function[i]
+        # Lista que vai armazenar os valores da função f(x)
+        f_values = np.zeros(self.n)  # inicializada com zeros
+        for i in range(len(self.n)):
+            f_values[i] = math.exp(-A * self.xPoints[i]) * math.cos(B * self.xPoints[i])
+
+        # retorna um array com TRUE se y < f_values. FALSE, caso contrario.
+        h = (self.yPoints <= f_values)
+
+        soma = h.sum()
 
         return soma / self.n
 
@@ -96,12 +101,9 @@ class ImportanceSampling:
         # g(x) = Beta Distribuition(alpha, beta)
         self.alpha = 0.35
         self.beta = 1
+        points = np.random.beta(self.alpha, self.beta, self.n)
 
-        points = self.dist_beta()
         self.soma = self.experimento(points)
-
-    def dist_beta(self):
-        return np.random.beta(self.alpha, self.beta, self.n)
 
     def experimento(self, points):
         n = len(points)
@@ -133,23 +135,23 @@ class ImportanceSampling:
 class ControlVariate:
     def __init__(self, n):
         self.n = n
-        # phi(x) = 0.4(x-1)^2+0.6 (polynomial function)
-        self.integration_phi = 0.73333  # integral de phi no intervalo (0,1)
-        points = self.uniform(n)
+        # phi(x) = -0.39727x + 1
+        self.integration_phi = 0.801365  # integral de phi no intervalo (0,1)
+        points = np.random.uniform(0, 1, n)
         self.soma = self.experimento(points)
-
-    def uniform(self, n):
-        return np.random.uniform(0, 1, n)
 
     def experimento(self, points):
         n = len(points)
         soma = 0
         for i in range(n):
             soma += (np.exp(-A * points[i]) * np.cos(B * points[i])) \
-                    - (0.4*(points[i] - 1)**2+0.6) \
+                    - (-0.39727*points[i] + 1) \
                     + self.integration_phi
 
         return soma / self.n
+
+    def estimativa(self):
+        return self.soma
 
 
 if __name__ == '__main__':
