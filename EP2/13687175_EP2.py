@@ -5,30 +5,31 @@ SEED = 13687175
 A = 0.386617636
 B = 0.47950399848
 
+
 def main():
     np.random.seed(SEED)
 
     print('\n \n')
-    print('CRUDE')
-    print('{0:^10} | {1:^25}'.format('Sample',
-                                     f'Estimativa'))
-    print('-'*35)
-    for i in range(1, 10):
-        n = 13465688
-        crude = Crude(n)
-        print('{0:^10} | {1:^25}'.format(f'{n}',
-                                        f'{crude.estimativa()}'))
-
-    print('\n \n')
-    print('Hit or Miss')
-    print('{0:^10} | {1:^25}'.format('Sample',
-                                     f'Estimativa'))
-    print('-' * 35)
-    for i in range(1, 10):
-        n = 10128002
-        hom = HitOrMiss(n)
-        print('{0:^10} | {1:^25}'.format(f'{n}',
-                                         f'{hom.estimativa()}'))
+    # print('CRUDE')
+    # print('{0:^10} | {1:^25}'.format('Sample',
+    #                                  f'Estimativa'))
+    # print('-'*35)
+    # for i in range(1, 10):
+    #     n = 13465688
+    #     crude = Crude(n)
+    #     print('{0:^10} | {1:^25}'.format(f'{n}',
+    #                                     f'{crude.estimativa()}'))
+    #
+    # print('\n \n')
+    # print('Hit or Miss')
+    # print('{0:^10} | {1:^25}'.format('Sample',
+    #                                  f'Estimativa'))
+    # print('-' * 35)
+    # for i in range(1, 10):
+    #     n = 10128002
+    #     hom = HitOrMiss(n)
+    #     print('{0:^10} | {1:^25}'.format(f'{n}',
+    #                                      f'{hom.estimativa()}'))
 
     print('\n \n')
     print('IMPORTANCE SAMPLING')
@@ -58,7 +59,6 @@ class Crude:
         # Choose randomly points in [0,1) using Uniform distribution
         points = np.random.uniform(0, 1, n)
         f_values = np.exp(-A * points) * np.cos(B * points)
-
         self.gamma_hat = f_values.sum() / n
 
     def estimativa(self):
@@ -86,11 +86,11 @@ class HitOrMiss:
 class ImportanceSampling:
     def __init__(self, n):
         # g(x) = Beta Distribuition(alpha, beta)
-        self.alpha = 0.35
-        self.beta = 1
-        points = np.random.beta(self.alpha, self.beta, n)  # geradora de pontos da função beta
+        _alpha = 0.35
+        _beta = 1
+        points = np.random.beta(_alpha, _beta, n)  # geradora de pontos da função beta
         f_values = np.exp(-A * points) * np.cos(B * points)  # guarda todos os valores da funcao f(x)
-        beta_values = beta.pdf(points, self.alpha, self.beta)  # guarda todos os valores da funcao beta(alpha, beta)
+        beta_values = beta.pdf(points, _alpha, _beta)  # guarda todos os valores da funcao beta(alpha, beta)
 
         # (f / beta_values).sum() retorna um array com a soma de todas as divisoes feitas entre 'f' e 'beta_values'
         self.gamma_hat = (f_values / beta_values).sum() / n  # estimativa da importance sample
