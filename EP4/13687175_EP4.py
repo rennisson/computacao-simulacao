@@ -1,7 +1,7 @@
 import time
 import numpy as np
 import numpy.random
-from scipy.stats import qmc, beta, uniform
+from scipy import stats
 
 SEED = 13687175
 A = 0.386617636
@@ -10,22 +10,21 @@ B = 0.47950399848
 
 def main():
     numpy.random.seed(13687175)
-    x = np.array([1, 1, 2])
-    y = np.array([3, 2, 1])
-    n = 10
-    points = numpy.random.gamma(0.5, size=(n, 3))  # generate n vectors of theta
-    posterior_function = posterior_density_function(points, x, y)
+    pvals = np.random.random(3)
+    print(f'pvals: {pvals}')
+    x = np.random.multinomial(10, pvals, 1)
+    y = np.random.multinomial(10, pvals, 1)
+    print(f'x: {x}, y: {y}')
+    theta = stats.dirichlet.rvs(x[0], size=1)
+    print(f'theta: {theta}')
+    posterior_function = posterior_density_function(theta, x, y)
+    print(f'posterior function: {posterior_function}')
+    sup_f = max(posterior_function[0])
+    print(sup_f)
 
 
-def posterior_density_function(points, x, y):
-    f = points**(x*y-1)  # matrix (n, 3), where each triple is theta^(x * y - 1)
-    f_values = np.ndarray(shape=(10, 1))
-
-    for i in range(10):
-        f_values[i] = f[i][0] * f[i][1] * f[i][2]  # product among the 3 therms from each triple
-
-    print(f'f_values: {f_values}')
-    return f_values
+def posterior_density_function(theta, x, y):
+    return theta**(x*y-1)  # matrix (n, 3), where each triple is theta^(x * y - 1)
 
 
 if __name__ == '__main__':
