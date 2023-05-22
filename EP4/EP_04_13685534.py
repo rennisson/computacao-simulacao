@@ -9,6 +9,7 @@ y = np.array([5, 2, 2])
 alpha = alpha2 = x+y
 k = 100000
 v = 10
+print(alpha)
 
 # Gerar valores das "tríades" teta, f(teta) e o maximo (v_k)
 teta = stats.dirichlet.rvs(alpha, size=N)
@@ -19,7 +20,7 @@ f = np.split(f, k)
 soma = 0
 for c in range(0, k):
     soma += f[c].size
-    if(max(f[c]) >= v):
+    if max(f[c]) >= v:
         break
     
 print(soma/ N)
