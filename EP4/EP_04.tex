@@ -1,0 +1,52 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{amsmath}
+\usepackage{caption}
+\usepackage[leftcaption]{sidecap}
+\usepackage{afterpage}
+\usepackage{titling}
+
+\predate{}
+\postdate{}
+\graphicspath{ {./imagens/} }
+\usepackage{multicol}
+\date{}
+\title{\vspace{-2.0cm}EP 02 - MAP2212}
+\author{Gustavo Nunes / Rennisson Davi Alves}
+
+\begin{document}
+		\maketitle
+	
+	\section{O Programa}
+	A ideia do programa é, a partir dos vetores $x$ e $y$ naturais de tamanho 3, gerados aleatóriamente. Dados $x$ e $y$, são gerados N $\{\theta \in R_3^+ | \theta^{'}=1 \}$. A densidade posterior de $\theta$ $f(\theta|x, y)$segue uma distribuição Dirichlet de parâmetro $\alpha = x + y$, e é assim que serão gerados os valores. 
+	
+	Definimos o conjunto de corte $T(v) = \{\theta \in \Theta | f(\theta | x, y) \leq v\}, v\geq0$. Daí, definimos a função verdade $W(v) = \int_{T(v)}f(\theta|x, y)d\theta$. 
+	
+	A ideia do programa é aproximar por métodos estocásticos $U(v)$, que serve como aproximação para $W(v)$ com erro menor que $0.05\%$. 
+	
+	Para isso, definimos k pontos de corte $0 = v_0 < v_1 < ... < v_k = sup f(\theta)$. Daí, geramos N pontos $\theta_1, \theta_2, ..., \theta_N$ de acordo com a Dirichlet, e simulamos $U(v)$ usando a fração dos pontos $\theta_k | f(\theta_k)  \leq v $. 
+	
+	\section{Escolha de N}
+	
+	Para a escolha do N empírico, usamos um N = $10^{6}$ suficientemente grande como referência para testes, com $\bar{U}(v)$ sendo gerado usando esse N. Também usamos $k = 10^5$(?), mais que o mínimo suficiente para gerar U na margem de erro definida. 
+	
+	Usamos uma função teste que gera 100 valores para $U(v)$, e devolve quantos estão dentro da margem de erro estabelecida, o valor i na tabela. Temos assim alguns resultados: 
+ 
+	\begin{table}[htbp]
+		\begin{tabular}{|c|c|c|c|c|}
+			v & U(v) & Erro (\%) & Tempo (s)\\
+			\hline
+			0 & 0 & 0 & 0\\	
+			4 & 0.1238 & 0.012 & 0.0469\\
+			8 & 0.2596 & 0.026 & 0.0625\\
+                12 & 0.4017 & 0.040 & 0.0937\\
+                16 & 0.5481 & 0.054 & 0.1094\\
+                20 & 0.6976 & 0.070 & 0.1562\\
+                24 & 0.8489 & 0.085 & 0.1719\\
+                28 & 1 & 0.1 & 0.2187\\
+		\end{tabular}
+	\end{table}
+ 
+
+	\section{Testes e conclusão}
+\end{document}
