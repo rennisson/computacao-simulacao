@@ -48,5 +48,11 @@
 	\end{table}
  
 
-	\section{Testes e conclusão}
+    \section{Testes e conclusão}
+    
+    De acordo com os testes realizados e mostrados na tabela da seção anterioro, os resultados obtidos são extremamente satisfatórios para o objetivo do que foi proposto. Para cada corte v, o algoritmo foi capaz de se aproximar do valor real da massa da função W(v) com precisão acima de 99.95\%.
+    
+    Vale lembrar que para gerar todos os arrays necessários, foi utilizado o NUSP 13685534 como seed. Desse modo, fica mais fácil reproduzir os testes e verificar seus resultados.
+    
+    Nao obstante, os tempos de execução de cada experimento foram excelentes, não ultrapassando o tempo de 1 segundo. Claro que o valor maximo de corte para analise da função é relativamente pequeno (27.93 para ser mais exato), tornando o número de comparações também pequeno. Mas como o algoritmo foi implementado utilizando ndarrays, mesmo se o valor maximo da função fosse muito maior, o programa não teria muito problema em executá-lo.
 \end{document}
