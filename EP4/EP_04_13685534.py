@@ -7,8 +7,6 @@ import scipy.stats as stats
 def main():
     # Definições importantes 
     np.random.seed(13685534)
-    # N = int(sys.argv[1])
-    # k = int(sys.argv[2])
     N = int(input("Digite o valor para N: "))
     k = int(input("Digite o valor para K: "))
 
@@ -24,7 +22,7 @@ def main():
         if v == -1:
             break
         else:
-            calcula_U(val_f, k, N, v)
+            print(calcula_U_teste(val_f, k, N, v))
     
 
 def gera_valores(alpha, k, N):
@@ -36,21 +34,29 @@ def gera_valores(alpha, k, N):
     return f
 
 
-def calcula_U(f, k, N, v):
+def calcula_U(f, k, N, v, mode):
     start_time = time.time()
     soma = 0
-    cont = 0
-    for c in range(0, k):
+    for c in range(0, int(k)):
         soma += f[c].size
         if max(f[c]) >= v:
             break
-        cont += 1
+    if(mode == 1):
+        exec_time = time.time() - start_time
+        print(f'U(v): {soma / N:0.4f}')
+        print(f'Tempo: {exec_time:0.4f}\n')
+    else:
+        return (soma / N);
 
-    exec_time = time.time() - start_time
-
-    print(f'U(v): {soma / N:0.4f}')
-    print(f'ERRO (%): {(cont / N):0.4f}')
-    print(f'Tempo: {exec_time:0.4f}\n')
+def calcula_U_teste(f, k, N, v):
+    ref = calcula_U(f, k, 1000000, v, 0)
+    arr = np.zeros(100)
+    for c in range(0, 100):
+        arr[c] = calcula_U(f, k, N, v, 0)
+    t_1 = arr <= ref*1.0005
+    t_2 = arr >= ref*0.9995
+    t = t_1 & t_2
+    return t.sum()
 
 if __name__ == '__main__':
     main()
