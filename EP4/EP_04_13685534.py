@@ -1,4 +1,3 @@
-import sys
 import time
 import numpy as np
 import scipy.stats as stats
@@ -12,7 +11,7 @@ def main():
 
     x = np.random.randint(1, 10, 3)
     y = np.random.randint(1, 10, 3)
-    alpha = x+y
+    alpha = x + y
     val_f = gera_valores(alpha, k, N)
 
     print(f"Valor máximo global de f: {np.amax(val_f)}\n")
@@ -23,7 +22,7 @@ def main():
             break
         else:
             print(calcula_U_teste(val_f, k, N, v))
-    
+
 
 def gera_valores(alpha, k, N):
     # Gerar valores das "tríades" teta, f(teta) e o maximo (v_k)
@@ -41,22 +40,24 @@ def calcula_U(f, k, N, v, mode):
         soma += f[c].size
         if max(f[c]) >= v:
             break
-    if(mode == 1):
+    if mode == 1:
         exec_time = time.time() - start_time
         print(f'U(v): {soma / N:0.4f}')
         print(f'Tempo: {exec_time:0.4f}\n')
     else:
-        return (soma / N);
+        return soma / N
+
 
 def calcula_U_teste(f, k, N, v):
     ref = calcula_U(f, k, 1000000, v, 0)
     arr = np.zeros(100)
     for c in range(0, 100):
         arr[c] = calcula_U(f, k, N, v, 0)
-    t_1 = arr <= ref*1.0005
-    t_2 = arr >= ref*0.9995
+    t_1 = arr <= ref * 1.0005
+    t_2 = arr >= ref * 0.9995
     t = t_1 & t_2
     return t.sum()
+
 
 if __name__ == '__main__':
     main()
