@@ -13,6 +13,7 @@ def main():
     y = np.random.randint(1, 10, 3)
     alpha = x + y
     val_f = gera_valores(alpha, k, N)
+    ref_f = gera_valores(alpha, 1000000, 10000000)
 
     print(f"Valor máximo global de f: {np.amax(val_f)}\n")
 
@@ -21,7 +22,7 @@ def main():
         if v == -1:
             break
         else:
-            precisao, massa, tempo = calcula_U_teste(val_f, k, N, v)
+            precisao, massa, tempo = calcula_U_teste(val_f, k, N, v, ref_f)
             print(f'U(v): {massa:0.4f}')
             print(f'Precisão: {precisao}%')
             print(f'Tempo: {tempo:0.4f}\n')
@@ -47,11 +48,11 @@ def calcula_U(f, k, N, v, mode):
         print(f'U(v): {soma / N:0.4f}')
         print(f'Tempo: {exec_time:0.4f}\n')
     else:
-        return soma / N
+        return float(soma) / float(N)
 
 
-def calcula_U_teste(f, k, N, v):
-    ref = calcula_U(f, k, 1000000, v, 0)
+def calcula_U_teste(f, k, N, v, ref_f):
+    ref = calcula_U(ref_f, 1000000, 10000000, v, 0)
     arr = np.zeros(100)
     tempo = np.zeros(100)
     for c in range(0, 100):
