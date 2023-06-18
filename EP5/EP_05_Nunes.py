@@ -44,18 +44,18 @@ def main():
 
 # Gera valores já repartidos de acordo com a Dirichlet
 
-def gera_valores_teste(): 
-    f = np.zeros((100, 3))
-    theta = (5, 3, 4)
-    theta_1 = stats.multivariate_normal.rvs((10, 10, 10), random_state=1)
+def gera_valores_teste(theta, k, N): 
+    cont = 0 
+    f = np.zeros((N, 3))
+    theta_1 = stats.multivariate_normal.rvs((0.3, 0.3, 0.4))
     while True:
         if(theta_1[0] < 0 or theta_1[1] < 0 or theta_1[2] < 0):
-            theta_1 = stats.multivariate_normal.rvs((10, 10, 10), random_state=1)
+            theta_1 = stats.multivariate_normal.rvs((0.3, 0.3, 0.4))
         else: 
             theta_1 = theta_1 / theta_1.sum()
             break 
-    for c in range(0, 100):
-        theta_2 = stats.multivariate_normal.rvs(theta_1)
+    for c in range(0, 1000):
+        theta_2 = stats.multivariate_normal.rvs(theta_1, cov=0.06)
         if(theta_2[0] < 0 or theta_2[1] < 0 or theta_2[2] < 0):
             alpha = 0
         else: 
@@ -68,8 +68,30 @@ def gera_valores_teste():
             if(rand < alpha):
                 f[c] = theta_2
             else: 
+                cont += 1
+                f[c] = theta_1
+    f[0] = f[999]
+    for c in range(0, N):
+        theta_2 = stats.multivariate_normal.rvs(theta_1, cov=0.06)
+        if(theta_2[0] < 0 or theta_2[1] < 0 or theta_2[2] < 0):
+            alpha = 0
+        else: 
+            theta_2 = theta_2 / theta_2.sum()
+            alpha = stats.dirichlet.pdf(theta_2, theta) / stats.dirichlet.pdf(theta_1, theta)
+        if(alpha >= 1):
+            f[c] = theta_2
+        else:
+            rand = random.uniform(0, 1)
+            if(rand < alpha):
+                f[c] = theta_2
+            else: 
+                cont += 1
                 f[c] = theta_1
         theta_1 = f[c]
+    g = stats.dirichlet.pdf(f.T, theta)
+    g.sort()
+    g = np.split(g, k)
+    return g
         
 
 def gera_valores(alpha, k, N):
