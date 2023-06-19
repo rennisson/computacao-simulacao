@@ -1,0 +1,67 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{amsmath}
+\usepackage{caption}
+\usepackage[leftcaption]{sidecap}
+\usepackage{afterpage}
+\usepackage{titling}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+\predate{}
+\postdate{}
+\graphicspath{ {./imagens/} }
+\usepackage{multicol}
+\date{}
+\title{\vspace{-3.0cm}EP 02 - MAP2212}
+\author{Gustavo Nunes }
+
+\begin{document}
+	
+	\maketitle
+	
+	\section{O Programa}
+	O programa é o mesmo do EP04, porém com uma mudança no gerador de números de acordo com a distribuição Diricihlet, sem usar o método rvs da função Dirichlet da biblioteca Scipy. 
+	
+	A ideia para o gerador é usar o algorítmo de Metropolis-Hastings, que para o nosso caso pode ser escrito em pseudocódigo: 
+\begin{algorithm}
+	\caption{Algorítmo de Metropolis-Hastings para gerador de números aleatórios de acordo com a distribuição Diricihlet}\label{}
+	\begin{algorithmic}
+		\State Theta1 = ponto arbitrário 
+		\State f = array de resultados 
+		\While{$c \leq N$}
+		\State Theta2 gerado de Normal Multivariada de média Theta1
+		\State Alpha = Dirichlet(Theta2) / Dirichlet(Theta1)
+		\If{alpha $\geq$ 1} 
+			\State f[c] = Theta2 \Comment{Aceita Theta2}
+
+		\ElsIf{$0 \leq$ alpha $\leq 1$}
+			\State f[c] = Theta2 com probabilidade alpha
+			\State f[c] = Theta1 com probabiliade (1-alpha)
+		\EndIf
+		\State Theta1 = f[c]
+
+		\EndWhile
+		\State
+		\Return f
+	\end{algorithmic}
+\end{algorithm}
+	
+Para a geração, foram usadas na geração de números de acordo com a normal e com a Dirichlet a biblioteca "Scipy". Na normal, foi usado o parâmetro "cov = 0.6", que termina a matriz de covariância que empíricamente rejeita $\approx$ 30\% dos Thetas gerados. Na Dirichlet, o parâmetro usado é gerado aleatóriamente na função "main", assim como no EP04. 
+
+Estão abaixo o resultado de alguns testes com o gerador modificado: 
+
+	\begin{table}[htbp]
+		\begin{tabular}{||c|c|c|c|c||}
+			N & v & U(v) & TEmpo de geração & Precisão  \\
+			\hline
+			a & b & c & d & e \\	
+			a & b & c & d & e \\
+		\end{tabular}
+	\end{table}
+
+	Para medida de precisão, foram gerados 100 amostras diferentes e medido quantas ficaram dentro do intervalo de confiança pedido, com a referência sendo um N = $10^7$ arbitráriamente grande e $k = 10^6$ suficiente para garantir a precisão dado N grande suficiente. 
+	
+	\section{Conclusão}
+
+\end{document}
