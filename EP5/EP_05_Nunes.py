@@ -1,7 +1,7 @@
+import random 
 import time
 import numpy as np
 import scipy.stats as stats
-import random
 
 '''
 Nome : Gustavo Silva de Almeida Nunes, Rennisson Davi Alves
@@ -43,64 +43,54 @@ def main():
             print(f'Tempo: {tempo:0.4f}\n')
 
 # Gera valores já repartidos de acordo com a Dirichlet
-
-def gera_valores_teste(theta, k, N): 
-    cont = 0 
+def gera_valores(theta, k, N): 
     f = np.zeros((N, 3))
-    theta_1 = stats.multivariate_normal.rvs((0.3, 0.3, 0.4))
-    while True:
-        if(theta_1[0] < 0 or theta_1[1] < 0 or theta_1[2] < 0):
+    theta_1 = stats.multivariate_normal.rvs((0.3, 0.3, 0.4))            # Primeiro Theta arbitrário
+
+    while True:                                                        
+        if(theta_1[0] < 0 or theta_1[1] < 0 or theta_1[2] < 0): 
             theta_1 = stats.multivariate_normal.rvs((0.3, 0.3, 0.4))
         else: 
             theta_1 = theta_1 / theta_1.sum()
             break 
-    for c in range(0, 1000):
+
+    for c in range(0, 200):                                             # Aquecimento da cadeira
         theta_2 = stats.multivariate_normal.rvs(theta_1, cov=0.06)
-        if(theta_2[0] < 0 or theta_2[1] < 0 or theta_2[2] < 0):
+        if(theta_2[0] < 0 or theta_2[1] < 0 or theta_2[2] < 0):         # Rejeitar se tiver fora do domínio
             alpha = 0
         else: 
             theta_2 = theta_2 / theta_2.sum()
             alpha = stats.dirichlet.pdf(theta_2, theta) / stats.dirichlet.pdf(theta_1, theta)
-        if(alpha >= 1):
+        if(alpha >= 1):                                                 # Aceitar o rejeitar de acordo com o critério do algorítmo
             f[c] = theta_2
         else:
             rand = random.uniform(0, 1)
             if(rand < alpha):
                 f[c] = theta_2
             else: 
-                cont += 1
                 f[c] = theta_1
-    f[0] = f[999]
-    for c in range(0, N):
+    theta_1 = f[199]
+
+    for c in range(0, N):                                               # Parte principal de geração de f
         theta_2 = stats.multivariate_normal.rvs(theta_1, cov=0.06)
-        if(theta_2[0] < 0 or theta_2[1] < 0 or theta_2[2] < 0):
+        if(theta_2[0] < 0 or theta_2[1] < 0 or theta_2[2] < 0):         # Rejeitar se tiver fora do domínio
             alpha = 0
         else: 
             theta_2 = theta_2 / theta_2.sum()
             alpha = stats.dirichlet.pdf(theta_2, theta) / stats.dirichlet.pdf(theta_1, theta)
-        if(alpha >= 1):
+        if(alpha >= 1):                                                 # Aceitar o rejeitar de acordo com o critério do algorítmo
             f[c] = theta_2
         else:
             rand = random.uniform(0, 1)
             if(rand < alpha):
                 f[c] = theta_2
             else: 
-                cont += 1
                 f[c] = theta_1
         theta_1 = f[c]
-    g = stats.dirichlet.pdf(f.T, theta)
+    g = stats.dirichlet.pdf(f.T, theta)                                     
     g.sort()
     g = np.split(g, k)
     return g
-        
-
-def gera_valores(alpha, k, N):
-    # Gerar valores das "tríades" teta, f(teta) e o maximo (v_k)
-    teta = stats.dirichlet.rvs(alpha, size=N)
-    f = stats.dirichlet.pdf(teta.T, alpha)
-    f.sort()
-    f = np.split(f, k)
-    return f
 
 # Calcula o valor de U(v)
 def calcula_U(f, k, N, v, mode):
@@ -132,5 +122,5 @@ def calcula_U_teste(f, k, N, v, ref_f):
     return t.sum(), arr.mean(), tempo.mean()
 
 
-gera_valores_teste()
-gera_valores((5, 3, 4), 10, 100)
+if __name__ == '__main__':
+    main()
