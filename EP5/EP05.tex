@@ -79,11 +79,17 @@ Estão abaixo o resultado de alguns testes com o gerador modificado:
         Vale lembrar que para gerar todos os arrays necessários, foi utilizado o NUSP
         13687175 como seed. Desse modo, fica mais fácil reproduzir os testes e verificar
         seus resultados.
-        
-        Não obstante, os tempos de execução de cada experimento foram excelentes,
+
+
+        Não obstante, os tempos de execução de cada experimento após a geração dos números foram excelentes,
         não ultrapassando o tempo de 1 segundo. Claro que o valor máximo de corte
         para analise da função é relativamente pequeno (26.95 para ser mais exato),
-        tornando o número de comparações também pequeno.
-        A exceção é a geração dos valores de referência que, por precisarem de $N = 10^6$, custam mais tempo para sua criação.
+        tornando o número de comparações também pequeno. 
+
+ 	O problema do gerador é que como cada número precisa ser gerado com um loop independentemente, não sendo possível
+  	o uso de métodos mais rápidos de vetores do Numpy e do Scipy, o tempo de geração dos números 
+  	é consideravelmente maior, oque é de ser esperado dado um algoritmo para situações em que não conseguimos gerar
+   	os números diretamente com a distribuição desejada. 
+    
 
 \end{document}
