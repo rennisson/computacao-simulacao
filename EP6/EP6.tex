@@ -1,0 +1,82 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{amsmath}
+\usepackage{caption}
+\usepackage[leftcaption]{sidecap}
+\usepackage{afterpage}
+\usepackage{titling}
+
+\predate{}
+\postdate{}
+\graphicspath{ {./imagens/} }
+\usepackage{multicol}
+\date{}
+\title{\vspace{-3.0cm}EP 05 - MAP2212}
+\author{Gustavo Nunes - 13685534 \\Rennisson Davi Alves - 13687175}
+
+\begin{document}
+
+    \maketitle
+        \section{O Programa}
+        O objetivo é encontrar o e-valor da hipotese de Hardy-Weinberg no modelo da trinomial de Dirichlet.
+        Para isso, usaremos como base o código desenvolvido no exercicio programa 5.
+
+        De início, o vetor (1, 1, 1) foi selecionado como valor da priori. Outros valores e arrays foram gerados
+        através da função Dirichlet da biblioteca SciPy. Na Dirichlet, o parâmetro usado é gerado aleatóriamente
+        na função "main", assim como no EP05. Para melhora de performance, o Numpy foi utilizado, a fim de facilitar
+        as operações com arrays.
+
+        Estão abaixo os resultados de alguns testes realizados:
+
+        \begin{table}[h]
+            \centering
+            \begin{tabular}{|c|c|c|c|c|}
+                $x_1$ & $x_3$ & Ev & Precisão & Tempo de execução\\
+                \hline
+                1 & 4 & 0.039 & 1 & 1.0823 \\
+                1 & 8 & 0.485 & 1 & 1.0469 \\
+                1 & 8 & 0.485 & 1 & 1.0469 \\
+                1 & 11 & 0.95* & 1 & 1.1099 \\
+                1 & 15 & 0.665 & 0.98 & 1.1323 \\
+                5 & 0 & 0.015 & 1 & 1.0471 \\
+                5 & 1 & 0.094 & 1 & 1.1513 \\
+                5 & 3 & 0.606 & 1 & 1.0913 \\
+                5 & 5 & 1* & 1 & 1.1083 \\
+                5 & 8 & 0.402 & 1 & 1.0471 \\
+                9 & 0 & 0.193 & 0.95 & 1.0781 \\
+                9 & 2 & 0.993* & 1 & 1.0768 \\
+                9 & 4 & 0.497 & 1 & 1.0950 \\
+                9 & 6 & 0.065 & 0.95 & 1.0939 \\
+            \end{tabular}
+        \end{table}
+
+        Como base de comparação, utilizamos a tabela de valores presente em Evidence and Credibility:
+        Full Bayesian Significance Test for Precise Hypotheses (Carlos Alberto de Bragança Pereira and Julio Michael Stern), que já nos mostra
+        os valores que são esperados como resultado para cada conjunto de X.
+
+        Para precisão, foram comparados os valores gerados entre as priori (1, 1, 1) e (0, 0, 0). Para tal, foram calculados os valores
+        do conjunto X inputado no programa, utilizando a priori (1, 1, 1) e, logo após, utilizando a priori (0, 0, 0). No fim, foi calculada
+        a razão entre os dois resultados. Como podemos observar, todos os valores tiveram precisão acima de 95\%. Isso significa que ambos os
+        resultados originados da priori (1, 1, 1) e priori (0, 0, 0), chegaram em valores tão proximos quanto fossem possíveis,
+        minimizando ao máximo o erro da função.
+
+
+        \section{Conclusão}
+
+        De acordo com os testes realizados, os resultados obtidos são muito satisfatórios se comparados
+        com a tabela mencionada na seção anterior (Evidence and Credibility: Full Bayesian Significance Test for Precise Hypotheses).
+        Vemos que todos os valores utilizados como input retornaram os valores esperados com precisão acima de 95\%.
+        Tal feito denota o caráter preciso e valioso da avaliação da hipótese nula através do teste de Hardy-Weinberg.
+
+        Com base nestes resultados, é válido dizer que a hipótese nula é aceita nos casos marcados com * na tabela da seção anterior,
+        já que seus e-valores estão acima de 0.95.
+
+        Além disso, a função apresentou tempos de execução bem satisfatórios, permitindo quantidades significativas de testes
+        em tempo bastante enxutos, gastando poucos recursos computacionais.
+
+        Vale lembrar que para gerar todos os arrays necessários, foi utilizado o NUSP
+        13685534 como seed. Desse modo, fica mais fácil reproduzir os testes e verificar
+        seus resultados.
+
+
+\end{document}
